@@ -1,7 +1,7 @@
 // Only app1 is live. Others are coming soon.
 const apps = {
   app1: {
-    url: "C:/Users/stskdm/Desktop/bumpky.com/nudger5/Bumpkys_nudger.rar",
+    url: "https://pub-9094331f54d446aeafbff0e1151fcfc0.r2.dev",
     live: true,
     label: "Bumpky's nudger",
     info: "A simple executable that keeps your PC active"
