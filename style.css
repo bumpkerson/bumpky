@@ -1,0 +1,479 @@
+:root{
+  --bg: #f4f0f3;               /* light magenta */
+  --text: #141414;
+  --card: rgba(255,255,255,.95);
+  --shadow: 0 10px 30px rgba(0,0,0,.12);
+  --shadowSoft: 0 8px 18px rgba(0,0,0,.12);
+
+  /* CONTROL info icon size + position */
+  --info-size: 20px;     /* <- size of info circle */
+  --info-right: 18px;     /* <- inset from node icon right edge */
+  --info-bottom: 18px;    /* <- inset from node icon bottom edge */
+  --info-gap: 10px;      /* <- gap between icon and tooltip */
+
+    /* Tooltip width */
+    --info-width: 200px;
+}
+
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+
+body{
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  overflow: hidden; /* one screen */
+}
+
+/* Top-left logo */
+.topbar{
+  position: fixed;
+  top: -40px;
+  left: -30px;
+  z-index: -40;
+}
+.logo{
+  height: 150px;
+  width: auto;
+}
+
+/* Stage (full screen) */
+.stage{
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* Center mascot */
+.center{
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+.mascot{
+  width: min(520px, 58vw);
+  height: auto;
+  display: block;
+  filter: none;
+}
+
+/* App nodes */
+.node{
+  position: absolute;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
+/* App icon image (no distortion) */
+.node img{
+  width: 120px;
+  height: 120px;
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  object-fit: contain;
+  background: #fff;
+  padding: 12px;
+  display: block;
+  transition: transform .15s ease, filter .15s ease, opacity .15s ease;
+}
+
+/* Hover animation (enabled only) */
+.node:hover img{ transform: translateY(-2px); }
+.node:active img{ transform: translateY(0) scale(.98); }
+
+/* Hover-only label (normal behavior) */
+.node .label{
+  position: absolute;
+  bottom: -22px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease;
+
+  font-size: 14px;
+  font-weight: 650;
+  background: var(--card);
+  padding: 6px 12px;
+  border-radius: 999px;
+  box-shadow: var(--shadowSoft);
+  white-space: nowrap;
+}
+.node:hover .label{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Info icon overlay (front of app nodes) */
+.infoWrap{
+  position: absolute;
+  right: var(--info-right);
+  bottom: var(--info-bottom);
+  z-index: 999;
+  width: var(--info-size);
+  height: var(--info-size);
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  cursor: help;
+}
+
+/* Bulletproof override: prevent the big .node img rule from affecting info icon */
+.node .infoIcon{
+  width: var(--info-size) !important;
+  height: var(--info-size) !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 999px !important;
+  object-fit: contain !important;
+  transition: none !important;
+  opacity: 0.6;   /* 0 = invisible, 1 = fully visible */
+}
+
+/* Tooltip: appears to the RIGHT of the info icon */
+/* ✅ TOOLTIP — FIXED AND STABLE */
+.infoTip{
+  position: absolute;
+  left: calc(var(--info-size) + var(--info-gap));
+  top: 50%;
+  transform: translateY(-50%) translateX(6px);
+
+  width: var(--info-width);   /* 🔴 KEY LINE */
+  padding: 10px 12px;
+
+  background: var(--card);
+  border-radius: 12px;
+  box-shadow: var(--shadowSoft);
+
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.35;
+
+  white-space: normal;        /* wrap normally */
+  word-break: normal;         /* do NOT break per letter */
+  overflow-wrap: break-word;  /* only break long words */
+
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+/* ONLY show tooltip when hovering/focusing the info icon area */
+.infoWrap:hover .infoTip,
+.infoWrap:focus-visible .infoTip{
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* While hovering info icon, hide the normal label so only ONE description shows */
+.infoWrap:hover ~ .label,
+.infoWrap:focus-visible ~ .label{
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* Disabled state */
+.node.disabled{
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.node.disabled img{
+  filter: grayscale(35%);
+}
+.node.disabled:hover img{
+  transform: none;
+}
+
+/* (Optional) keyboard focus accessibility */
+.node:focus-visible img{
+  outline: 3px solid rgba(20,20,20,.25);
+  outline-offset: 4px;
+}
+
+/* Positions (your current oval) */
+/* LEFT */
+.n1 { left: 35%; top: 12%; }
+.n2 { left: 20%; top: 36%; }
+.n3 { left: 20%; top: 60%; }
+.n4 { left: 30%; top: 86%; }
+/* RIGHT */
+.n5 { left: 65%; top: 12%; }
+.n6 { left: 80%; top: 36%; }
+.n7 { left: 80%; top: 60%; }
+.n8 { left: 65%; top: 86%; }
+
+/* Mobile tweaks */
+@media (max-width: 720px){
+  .logo{ height: 90px; }
+  .mascot{ width: min(420px, 70vw); }
+
+  .node img{
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    padding: 8px;
+  }
+  .node .label{
+    font-size: 12px;
+    bottom: -38px;
+  }
+
+  :root{
+    --info-size: 14px;
+    --info-right: 4px;
+    --info-bottom: 4px;
+    --info-gap: 8px;
+  }
+
+  .infoTip{
+    font-size: 12px;
+  }
+}  
+
+/* Recommendation modal (append to style.css) */
+.recommend-modal{ position:fixed; inset:0; display:none; z-index:10000; font-family:inherit; }
+.recommend-modal[aria-hidden="false"]{ display:block; }
+.rec-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,0.45); }
+.rec-panel{ position:relative; width:min(680px,94vw); max-width:680px; margin:6vh auto; background:var(--card); border-radius:12px; padding:20px; box-shadow:var(--shadow); z-index:10001; }
+.rec-close{ position:absolute; right:12px; top:8px; background:transparent; border:0; font-size:26px; cursor:pointer; }
+#recForm label{ display:block; margin:10px 0; font-weight:600; }
+#recForm input,#recForm textarea{ width:100%; padding:10px; margin-top:6px; border-radius:8px; border:1px solid rgba(0,0,0,0.08); font:inherit; }
+.rec-actions{ display:flex; gap:10px; margin-top:12px; }
+.rec-actions button{ padding:10px 14px; border-radius:8px; border:0; cursor:pointer; font-weight:700; }
+#recStatus{ margin-top:10px; font-size:14px; color:#333; }
+@media (max-width:720px){
+  .rec-panel{ margin:4vh 12px; padding:14px; }
+}
+
+/* Outer wrapper: bottom-right, horizontal row */
+.corner-bar{
+  position: fixed;
+  right: 5px;
+  bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;              /* space between social group and BMC */
+  z-index: 9999;
+}
+
+/* Social icons group: Instagram + TikTok */
+.corner-buttons{
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 5px;
+}
+
+/* Social icon buttons — 30% smaller */
+.social-btn img{
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  background: #fff;
+  padding: 4px;
+  box-shadow: var(--shadowSoft);
+  transition: transform .15s ease, opacity .15s ease;
+}
+
+.social-btn:hover img{
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Buy Me a Coffee — floating card behavior */
+.corner-bmc{
+  display: flex;
+  align-items: flex-end;      /* match bottom alignment inside too */
+  zoom: 0.5;                  /* optional size tweak */
+}
+
+/* Style the injected BMC link as a card like the icons */
+.corner-bmc a{
+  display: inline-flex !important;
+  align-items: center;
+  box-shadow: var(--shadowSoft) !important;
+  border-radius: 10px !important;
+  padding: 4px 8px !important;
+  text-decoration: none !important;
+  transition: transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+
+/* Hover float, same feel as the icons */
+.corner-bmc a:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow) !important;
+  opacity: 0.95;
+}
+
+.corner-bmc{
+  margin-bottom: 8px;   /* micro-tweak up/down */
+}
+
+/* Mobile */
+@media (max-width: 720px){
+  .corner-buttons{
+    right: 12px;
+    bottom: 12px;
+    gap: 8px;
+  }
+}
+
+
+/* ---- Mobile-first behavior improvements (does not affect desktop) ---- */
+
+/* Allow tooltip to be toggled via tap (JS adds .tip-open) */
+.infoWrap.tip-open .infoTip{
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Phone layout: keep desktop untouched by overriding ONLY under 720px */
+@media (max-width: 720px){
+  body{
+    overflow: auto;                     /* allow scrolling on small screens */
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Put the logo on-screen */
+  .topbar{
+    position: relative;
+    left: auto;
+    top: auto;
+  }
+
+  .logo{
+    height: clamp(120px, 22vw, 140px);
+  }
+
+  /* Stack mascot + app tiles */
+  .stage{
+    height: auto;
+    min-height: 100vh;
+    padding: clamp(72px, 10vh, 96px)
+             clamp(12px, 4vw, 20px)
+             clamp(96px, 14vh, 130px);  /* room for logo & corner bar */
+  }
+
+  .center{
+    position: static;
+    inset: auto;
+    margin: 0 0 clamp(8px, 2.5vw, 18px) 0;
+  }
+
+  .mascot{
+    width: clamp(220px, 70vw, 360px);
+  }
+
+  /* Turn absolute-positioned nodes into a comfortable tap list */
+  .node{
+    position: relative;                 /* for info icon positioning */
+    left: auto;
+    top: auto;
+    transform: none;
+    width: min(100%, 92vw);
+    margin: clamp(8px, 2.4vw, 14px) auto;
+    padding: clamp(10px, 3vw, 16px) clamp(10px, 3vw, 16px);
+    border-radius: clamp(14px, 4vw, 22px);
+    background: rgba(255,255,255,.75);
+    box-shadow: var(--shadowSoft);
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: clamp(8px, 3vw, 14px);
+  }
+
+  /* Cancel the desktop absolute coordinates */
+  .n1,.n2,.n3,.n4,.n5,.n6,.n7,.n8{
+    left:auto;
+    top:auto;
+  }
+
+  /* Icon */
+  .node img{
+    width: clamp(52px, 14vw, 72px);
+    height: clamp(52px, 14vw, 72px);
+    padding: clamp(6px, 2vw, 10px);
+    border-radius: clamp(12px, 3.5vw, 18px);
+    box-shadow: none;
+    flex: 0 0 auto;
+  }
+
+  /* Always show the label on mobile (since hover doesn't exist) */
+  .node .label{
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    white-space: normal;
+    font-size: clamp(0.9rem, 3.5vw, 1.05rem);
+    font-weight: 700;
+  }
+
+  .node:hover .label{
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Info icon placement for the new tile layout */
+  .infoWrap{
+    right: clamp(8px, 2.5vw, 14px);
+    bottom: 50%;
+    transform: translateY(50%);
+  }
+
+  /* Tooltip: open to the LEFT so it stays inside the screen */
+  :root{
+    --info-width: clamp(160px, 60vw, 220px);
+  }
+
+  .infoTip{
+    left: auto;
+    right: calc(var(--info-size) + var(--info-gap));
+    top: 50%;
+    transform: translateY(-50%) translateX(-6px);
+    font-size: clamp(0.75rem, 3vw, 0.85rem);
+  }
+
+  .infoWrap:hover .infoTip,
+  .infoWrap:focus-visible .infoTip,
+  .infoWrap.tip-open .infoTip{
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+
+  /* Corner bar: keep it reachable without covering content */
+  .corner-bar{
+    position: relative;
+    top: clamp(-48px, -10vh, -24px);   /* pulls it UP */
+    right: clamp(8px, 2.4vw, 14px);
+  
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: clamp(8px, 2.4vw, 14px);
+  
+    z-index: 10002;
+  }
+
+  .corner-bmc{
+    zoom: 0.65;
+    margin-bottom: clamp(16px, 4vh, 40px);
+  }
+}
+
+
+

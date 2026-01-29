@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bumpky</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Top-left logo -->
+  <header class="topbar">
+    <img class="logo" src="assets/logo.png" alt="Bumpky logo" />
+  </header>
+
+  <main class="stage" aria-label="Bumpky apps">
+    <div class="center">
+      <img class="mascot" src="assets/bumpky.png" alt="Bumpky mascot" />
+    </div>
+
+    <button class="node n1" data-app="app1" aria-label="Download App 1">
+      <img src="assets/app1.png" alt="" />
+
+      <!-- Info circle overlay + tooltip (tooltip is INSIDE to position it reliably) -->
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky's mouse nudger</span>
+      </span>
+
+      <span class="label">Mouse nudger</span>
+    </button>
+    
+    <button class="node n2" data-app="app2" aria-label="Download App 2">
+      <img src="assets/app2.png" alt="" />    
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky's active camera warning</span>
+      </span>
+      <span class="label">Cam indicator</span>
+    </button>
+
+    <button class="node n3" data-app="app3" aria-label="Download App 3">
+      <img src="assets/app3.png" alt="" />
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky's PC blue light time-based screen adjustment</span>
+      </span>
+      <span class="label">Blue light</span>
+    </button>
+
+    <button class="node n4" data-app="app4" aria-label="Download App 4">
+      <img src="assets/app4.png" alt="" />
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky's clipboard history</span>
+      </span>
+      <span class="label">Clipboard history</span>
+    </button>
+
+    <button class="node n5" data-app="app5" aria-label="Download App 5">
+      <img src="assets/app5.png" alt="" />
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky's teams status handler</span>
+      </span>
+      <span class="label">Teams status</span>
+    </button>
+
+    <button class="node n6" data-app="app6" aria-label="Download App 6">
+      <img src="assets/app6.png" alt="" />
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky's always-on-top window tool</span>
+      </span>
+      <span class="label">Always on-top</span>
+    </button>
+
+    <button class="node n7" data-app="app7" aria-label="Download App 7">
+      <img src="assets/app7.png" alt="" />
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky transforms into your personal assistant</span>
+      </span>
+      <span class="label">AI assistant</span>
+    </button>
+    
+    <button class="node n8" data-app="app8" aria-label="Download App 8">
+      <img src="assets/app8.png" alt="" />
+<!--      
+      <span class="infoWrap" aria-label="More info" role="button" tabindex="0">
+        <img class="infoIcon" src="assets/info.png" alt="Info" />
+        <span class="infoTip">Bumpky waits for your recommendation</span>
+      </span>
+-->      
+      <span class="label">Wpw</span>
+    </button>    
+  </main>
+
+  <!-- Recommendation modal (insert before </body>) -->
+  <div id="recommendModal" class="recommend-modal" aria-hidden="true" role="dialog" aria-labelledby="rec-title">
+    <div class="rec-backdrop" data-close="true"></div>
+    <div class="rec-panel" role="document">
+      <button class="rec-close" aria-label="Close recommendation form">&times;</button>
+      <h2 id="rec-title">Send a recommendation</h2>
+      <form id="recForm">
+        <label>
+          Your name
+          <input name="name" type="text" required />
+        </label>
+        <label>
+          Your email
+          <input name="email" type="email" required />
+        </label>
+        <label>
+          Recommendation
+          <textarea name="message" rows="5" required></textarea>
+        </label>
+        <div class="rec-actions">
+          <button type="submit">Send recommendation</button>
+          <button type="button" class="rec-cancel">Cancel</button>
+        </div>
+        <div id="recStatus" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bottom-right bar -->
+  <div class="corner-bar">
+    
+    <!-- Social icons: Instagram + TikTok -->
+    <div class="corner-buttons">
+      <!-- Instagram -->
+      <a href="https://www.instagram.com/bumpky.b/" target="_blank" rel="noopener" class="social-btn">
+        <img src="assets/insta.png" alt="Bumpky Instagram">
+      </a>
+
+      <!-- TikTok -->
+      <a href="https://www.tiktok.com/@bumpky.b?_r=1&_t=ZN-93RoIydS9xO" target="_blank" rel="noopener" class="social-btn">
+        <img src="assets/tiktok.png" alt="Bumpky TikTok">
+      </a>
+    </div>
+
+    <!-- Buy Me a Coffee (separate class) -->
+    <div class="corner-bmc">
+      <script
+        type="text/javascript"
+        src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js"
+        data-name="bmc-button"
+        data-slug="bumpky"
+        data-color="#FFDD00"
+        data-emoji="☕"
+        data-font="Cookie"
+        data-text="Buy me a coffee"
+        data-outline-color="#000000"
+        data-font-color="#000000"
+        data-coffee-color="#ffffff">
+      </script>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
