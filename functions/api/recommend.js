@@ -63,14 +63,13 @@ export async function onRequestPost({ request, env }) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: `Bumpky Recommendations <${env.MAIL_FROM}>`,
+        from: `<${env.MAIL_FROM}>`,
         to: "contact@bumpky.com",
         reply_to: email,
-        subject: `New recommendation from ${name}`,
+        subject: `Input for Bumpky from ${email}`,
         text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
         html: `
           <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height:1.4">
-            <h2 style="margin:0 0 12px">New recommendation</h2>
             <p style="margin:0 0 6px"><b>Name:</b> ${esc(name)}</p>
             <p style="margin:0 0 12px"><b>Email:</b> <a href="mailto:${esc(email)}">${esc(email)}</a></p>
             <p style="margin:0 0 6px"><b>Message:</b></p>
