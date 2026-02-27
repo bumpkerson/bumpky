@@ -95,35 +95,41 @@
     </button>    
   </main>
 
-  <!-- Recommendation modal (insert before </body>) -->
-  <div id="recommendModal" class="recommend-modal" aria-hidden="true" role="dialog" aria-labelledby="rec-title">
-    <div class="rec-backdrop" data-close="true"></div>
-    <div class="rec-panel" role="document">
-      <button class="rec-close" aria-label="Close recommendation form">&times;</button>
-      <h2 id="rec-title">Send a recommendation</h2>
-      <form id="recForm">
-        <label>
-          Your name
-          <input name="name" type="text" required />
-        </label>
-        <label>
-          Your email
-          <input name="email" type="email" required />
-        </label>
-        <label>
-          Recommendation
-          <textarea name="message" rows="5" required></textarea>
-        </label>
-        <div class="cf-turnstile" data-sitekey="0x4AAAAAACjIK7o8Ze7Zt8UQ"></div>
-        <div class="rec-actions">
-          <button type="submit">Send recommendation</button>
-          <button type="button" class="rec-cancel">Cancel</button>
-        </div>
-        <div id="recStatus" style="margin-top:10px; font-size:14px;"></div>
-        <div id="recStatus" aria-live="polite"></div>
-      </form>
-    </div>
+
+<div id="recommendModal" class="recommend-modal" aria-hidden="true" role="dialog" aria-labelledby="rec-title">
+  <div class="rec-backdrop" data-close="true"></div>
+  <div class="rec-panel" role="document">
+    <button class="rec-close" aria-label="Close recommendation form">&times;</button>
+    <h2 id="rec-title">Send a recommendation</h2>
+
+    <form id="recForm">
+      <label>
+        Your name
+        <input name="name" type="text" required />
+      </label>
+
+      <label>
+        Your email
+        <input name="email" type="email" required />
+      </label>
+
+      <label>
+        Recommendation
+        <textarea name="message" rows="5" required></textarea>
+      </label>
+
+      <!-- Turnstile container (rendered by script.js) -->
+      <div id="ts-recommend"></div>
+
+      <div class="rec-actions">
+        <button type="submit">Send recommendation</button>
+        <button type="button" class="rec-cancel">Cancel</button>
+      </div>
+
+      <div id="recStatus" aria-live="polite" style="margin-top:10px; font-size:14px;"></div>
+    </form>
   </div>
+</div>
 
   <!-- Bottom-right bar -->
   <div class="corner-bar">

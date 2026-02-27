@@ -1,4 +1,3 @@
-// Only app1 is live. Others are coming soon.
 const apps = {
   app1: {
     url: "https://pub-9094331f54d446aeafbff0e1151fcfc0.r2.dev/Bumpkys_nudger.zip",
@@ -16,6 +15,27 @@ const apps = {
   app8: { url: "", live: true, label: "Recommendations", info: "Waiting for your recommendation" },
 };
 
+let tsWidgetId = null;
+
+function ensureTurnstileRendered() {
+  if (!window.turnstile) return;
+  const el = document.getElementById("ts-recommend");
+  if (!el) return;
+
+  if (tsWidgetId === null) {
+    tsWidgetId = window.turnstile.render(el, {
+      sitekey: "0x4AAAAAACjIK7o8Ze7Zt8UQ",
+    });
+  } else {
+    window.turnstile.reset(tsWidgetId);
+  }
+}
+
+function getTurnstileToken() {
+  const tokenInput = document.querySelector('input[name="cf-turnstile-response"]');
+  return tokenInput?.value || "";
+}
+
 function triggerDownload(url) {
   const a = document.createElement("a");
   a.href = url;
@@ -31,9 +51,18 @@ const modal = {
   open() {
     if (!this.node) return;
     this.node.setAttribute("aria-hidden", "false");
+
+    // Render/reset Turnstile when modal becomes visible
+    setTimeout(() => ensureTurnstileRendered(), 0);
+
+    // Clear status text each time modal opens
+    const statusEl = document.getElementById("recStatus");
+    if (statusEl) statusEl.textContent = "";
+
     // focus first input
     const first = this.node.querySelector("input, textarea, button");
     if (first) first.focus();
+
     // trap simple escape
     this._escHandler = (e) => { if (e.key === "Escape") this.close(); };
     document.addEventListener("keydown", this._escHandler);
@@ -71,14 +100,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (form) {
     form.addEventListener("submit", async (ev) => {
       ev.preventDefault();
-      statusEl.textContent = "Sending…";
+      if (statusEl) statusEl.textContent = "Sending…";
 
       const formData = new FormData(form);
       const payload = {
         name: formData.get("name"),
         email: formData.get("email"),
         message: formData.get("message"),
-        turnstileToken: formData.get("cf-turnstile-response") || ""
+        turnstileToken: getTurnstileToken()
       };
 
       try {
@@ -88,24 +117,24 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify(payload)
         });
 
-      if (!res.ok) {
-        statusEl.textContent = "Failed to send recommendation. Please try again.";
-        // ✅ IMPORTANT: reset Turnstile so you get a fresh token
-        if (window.turnstile) window.turnstile.reset();
-        return;
-      }
+        if (!res.ok) {
+          if (statusEl) statusEl.textContent = "Failed to send recommendation. Please try again.";
+          // Reset Turnstile (tiny delay improves reliability in modals)
+          setTimeout(() => ensureTurnstileRendered(), 50);
+          return;
+        }
 
-        statusEl.textContent = "Recommendation sent — thank you!";
+        if (statusEl) statusEl.textContent = "Recommendation sent — thank you!";
         form.reset();
 
-      // ✅ IMPORTANT: reset Turnstile after a successful send too
-      if (window.turnstile) window.turnstile.reset();
+        // Reset Turnstile after success too
+        setTimeout(() => ensureTurnstileRendered(), 50);
 
         setTimeout(() => modal.close(), 1200);
       } catch (err) {
         console.error(err);
-        statusEl.textContent = "An error occurred while sending.";
-        if (window.turnstile) window.turnstile.reset();
+        if (statusEl) statusEl.textContent = "An error occurred while sending.";
+        setTimeout(() => ensureTurnstileRendered(), 50);
       }
     });
   }
