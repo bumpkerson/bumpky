@@ -63,7 +63,7 @@ export async function onRequestPost({ request, env }) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: `<${env.MAIL_FROM}>`,
+        from: <${env.MAIL_FROM}>,
         to: "contact@bumpky.com",
         reply_to: email,
         subject: `Input for Bumpky from ${email}`,
