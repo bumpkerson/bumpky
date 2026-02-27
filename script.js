@@ -90,7 +90,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!res.ok) {
           const body = await res.text();
-          statusEl.textContent = `Failed: ${res.status} — ${body}`;
+          statusEl.textContent = "Failed to send recommendation. Please try again.";
+          console.error("recommend failed:", res.status, body);
           return;
         }
 
