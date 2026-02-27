@@ -96,40 +96,40 @@
   </main>
 
 
-<div id="recommendModal" class="recommend-modal" aria-hidden="true" role="dialog" aria-labelledby="rec-title">
-  <div class="rec-backdrop" data-close="true"></div>
-  <div class="rec-panel" role="document">
-    <button class="rec-close" aria-label="Close recommendation form">&times;</button>
-    <h2 id="rec-title">Send a recommendation</h2>
+  <div id="recommendModal" class="recommend-modal" aria-hidden="true" role="dialog" aria-labelledby="rec-title">
+    <div class="rec-backdrop" data-close="true"></div>
+      <div class="rec-panel" role="document">
+        <button class="rec-close" aria-label="Close recommendation form">&times;</button>
+        <h2 id="rec-title">Send a recommendation</h2>
 
-    <form id="recForm">
-      <label>
-        Your name
-        <input name="name" type="text" required />
-      </label>
+        <form id="recForm">
+          <label>
+            Your name
+            <input name="name" type="text" required />
+          </label>
 
-      <label>
-        Your email
-        <input name="email" type="email" required />
-      </label>
+          <label>
+            Your email
+            <input name="email" type="email" required />
+          </label>
 
-      <label>
-        Recommendation
-        <textarea name="message" rows="5" required></textarea>
-      </label>
+          <label>
+            Recommendation
+            <textarea name="message" rows="5" required></textarea>
+          </label>
 
-      <!-- Turnstile container (rendered by script.js) -->
-      <div id="ts-recommend"></div>
+          <!-- Turnstile container (rendered by script.js) -->
+          <div id="ts-recommend"></div>
 
-      <div class="rec-actions">
-        <button type="submit">Send recommendation</button>
-        <button type="button" class="rec-cancel">Cancel</button>
+          <div class="rec-actions">
+            <button type="submit">Send recommendation</button>
+            <button type="button" class="rec-cancel">Cancel</button>
+          </div>
+
+          <div id="recStatus" aria-live="polite" style="margin-top:10px; font-size:14px;"></div>
+        </form>
       </div>
-
-      <div id="recStatus" aria-live="polite" style="margin-top:10px; font-size:14px;"></div>
-    </form>
   </div>
-</div>
 
   <!-- Bottom-right bar -->
   <div class="corner-bar">
@@ -167,7 +167,7 @@
   </div>
 
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js"></script>
-<script src="script.js?v=3"></script>
+<script src="script.js?v=4"></script>
 </body>
 </html>
 

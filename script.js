@@ -18,19 +18,35 @@ const apps = {
 let tsWidgetId = null;
 
 function ensureTurnstileRendered() {
-  if (!window.turnstile) {
-    setTimeout(ensureTurnstileRendered, 100);
-    return;
-  }
   const el = document.getElementById("ts-recommend");
   if (!el) return;
 
-  if (tsWidgetId === null) {
+  // Wait for Cloudflare Turnstile library
+  if (!window.turnstile || typeof window.turnstile.render !== "function") {
+    setTimeout(ensureTurnstileRendered, 100);
+    return;
+  }
+
+  // If we already rendered once, reset it
+  if (tsWidgetId !== null) {
+    try {
+      window.turnstile.reset(tsWidgetId);
+      return;
+    } catch (e) {
+      // If reset fails, fall through to re-render
+      tsWidgetId = null;
+      el.innerHTML = "";
+    }
+  }
+
+  // Render fresh
+  try {
     tsWidgetId = window.turnstile.render(el, {
       sitekey: "0x4AAAAAACjIK7o8Ze7Zt8UQ",
     });
-  } else {
-    window.turnstile.reset(tsWidgetId);
+  } catch (e) {
+    // Retry if render happens too early
+    setTimeout(ensureTurnstileRendered, 200);
   }
 }
 
@@ -141,6 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+  // Pre-warm Turnstile (optional)
+  setTimeout(() => ensureTurnstileRendered(), 0);
 });
 
 /* --- main node wiring (preserves original behavior) --- */
