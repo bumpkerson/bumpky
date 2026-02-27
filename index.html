@@ -114,6 +114,7 @@
           Recommendation
           <textarea name="message" rows="5" required></textarea>
         </label>
+        <div class="cf-turnstile" data-sitekey="0x4AAAAAACjIK7o8Ze7Zt8UQ"></div>
         <div class="rec-actions">
           <button type="submit">Send recommendation</button>
           <button type="button" class="rec-cancel">Cancel</button>
@@ -158,6 +159,8 @@
 
   </div>
 
-  <script src="script.js"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="script.js"></script>
 </body>
 </html>
+
