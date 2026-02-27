@@ -25,6 +25,9 @@ export async function onRequestPost({ request, env }) {
     const body = await request.json();
     const { name, email, message, turnstileToken } = body;
 
+    const esc = (s) =>
+      String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
     if (!name || !email || !message) {
       return new Response("Missing fields", { status: 400 });
     }
@@ -60,11 +63,22 @@ export async function onRequestPost({ request, env }) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        from: env.MAIL_FROM,
+        from: `Bumpky Recommendations <${env.MAIL_FROM}>`,
         to: "contact@bumpky.com",
         reply_to: email,
-        subject: `Bumpky recommendation from ${name}`,
-        text: `Name: ${name}\nEmail: ${email}\n\n${message}`
+        subject: `New recommendation from ${name}`,
+        text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+        html: `
+          <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height:1.4">
+            <h2 style="margin:0 0 12px">New recommendation</h2>
+            <p style="margin:0 0 6px"><b>Name:</b> ${esc(name)}</p>
+            <p style="margin:0 0 12px"><b>Email:</b> <a href="mailto:${esc(email)}">${esc(email)}</a></p>
+            <p style="margin:0 0 6px"><b>Message:</b></p>
+            <div style="white-space:pre-wrap; border:1px solid #e5e7eb; padding:12px; border-radius:8px;">
+              ${esc(message)}
+            </div>
+          </div>
+        `
       })
     });
 
