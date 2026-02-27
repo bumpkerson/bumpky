@@ -5,6 +5,16 @@ export async function onRequestPost({ request, env }) {
     const origin = request.headers.get("Origin") || "";
     const referer = request.headers.get("Referer") || "";
 
+    const ct = request.headers.get("Content-Type") || "";
+    if (!ct.toLowerCase().includes("application/json")) {
+      return new Response("Unsupported content type", { status: 415 });
+    }
+
+    const len = Number(request.headers.get("Content-Length") || "0");
+    if (len && len > 20_000) {
+      return new Response("Payload too large", { status: 413 });
+    }
+
     const allowedOrigins = new Set([
       "https://bumpky.com",
       "https://www.bumpky.com",
@@ -25,12 +35,26 @@ export async function onRequestPost({ request, env }) {
     const body = await request.json();
     const { name, email, message, turnstileToken } = body;
 
+    const norm = (v) => String(v ?? "").trim();
+
+    const company = norm(body.company);
+    if (company) return new Response("Forbidden", { status: 403 });
+
+    const nameN = norm(name);
+    const emailN = norm(email);
+    const messageN = norm(message);
+
+    if (nameN.length < 2 || nameN.length > 80) return new Response("Invalid name", { status: 400 });
+    if (emailN.length < 5 || emailN.length > 254) return new Response("Invalid email", { status: 400 });
+    if (messageN.length < 3 || messageN.length > 2000) return new Response("Invalid message", { status: 400 });
+
+    // Simple email format check (good enough)
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailN)) {
+      return new Response("Invalid email", { status: 400 });
+    }
+
     const esc = (s) =>
       String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-
-    if (!name || !email || !message) {
-      return new Response("Missing fields", { status: 400 });
-    }
 
     if (!turnstileToken) {
       return new Response("Missing Turnstile token", { status: 400 });
@@ -56,30 +80,39 @@ export async function onRequestPost({ request, env }) {
       );
     }
 
-    const resendResponse = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${env.RESEND_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        from: env.MAIL_FROM,
-        to: "contact@bumpky.com",
-        reply_to: email,
-        subject: `Input for Bumpky from ${email}`,
-        text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
-        html: `
-          <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height:1.4">
-            <p style="margin:0 0 6px"><b>Name:</b> ${esc(name)}</p>
-            <p style="margin:0 0 12px"><b>Email:</b> <a href="mailto:${esc(email)}">${esc(email)}</a></p>
-            <p style="margin:0 0 6px"><b>Message:</b></p>
-            <div style="white-space:pre-wrap; border:1px solid #e5e7eb; padding:12px; border-radius:8px;">
-              ${esc(message)}
+    const ac = new AbortController();
+    const t = setTimeout(() => ac.abort(), 8000);
+
+    let resendResponse;
+    try {
+      resendResponse = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        signal: ac.signal,
+        headers: {
+          "Authorization": `Bearer ${env.RESEND_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          from: env.MAIL_FROM,
+          to: "contact@bumpky.com",
+          reply_to: emailN,
+          subject: `Input for Bumpky from ${emailN}`,
+          text: `nameN: ${nameN}\nemailN: ${emailN}\n\n${messageN}`,
+          html: `
+            <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height:1.4">
+              <p style="margin:0 0 6px"><b>nameN:</b> ${esc(nameN)}</p>
+              <p style="margin:0 0 12px"><b>emailN:</b> <a href="mailto:${esc(emailN)}">${esc(emailN)}</a></p>
+              <p style="margin:0 0 6px"><b>messageN:</b></p>
+              <div style="white-space:pre-wrap; border:1px solid #e5e7eb; padding:12px; border-radius:8px;">
+                ${esc(messageN)}
+              </div>
             </div>
-          </div>
-        `
-      })
-    });
+          `
+        })
+      });
+    } finally {
+      clearTimeout(t);
+    }
 
     if (!resendResponse.ok) {
       const errorText = await resendResponse.text();

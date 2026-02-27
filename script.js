@@ -123,6 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const formData = new FormData(form);
       const payload = {
+        company: formData.get("company") || "",
         name: formData.get("name"),
         email: formData.get("email"),
         message: formData.get("message"),
