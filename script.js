@@ -18,7 +18,10 @@ const apps = {
 let tsWidgetId = null;
 
 function ensureTurnstileRendered() {
-  if (!window.turnstile) return;
+  if (!window.turnstile) {
+    setTimeout(ensureTurnstileRendered, 100);
+    return;
+  }
   const el = document.getElementById("ts-recommend");
   if (!el) return;
 
