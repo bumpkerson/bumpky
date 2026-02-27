@@ -88,19 +88,24 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify(payload)
         });
 
-        if (!res.ok) {
-          const body = await res.text();
-          statusEl.textContent = "Failed to send recommendation. Please try again.";
-          console.error("recommend failed:", res.status, body);
-          return;
-        }
+      if (!res.ok) {
+        statusEl.textContent = "Failed to send recommendation. Please try again.";
+        // ✅ IMPORTANT: reset Turnstile so you get a fresh token
+        if (window.turnstile) window.turnstile.reset();
+        return;
+      }
 
         statusEl.textContent = "Recommendation sent — thank you!";
         form.reset();
+
+      // ✅ IMPORTANT: reset Turnstile after a successful send too
+      if (window.turnstile) window.turnstile.reset();
+
         setTimeout(() => modal.close(), 1200);
       } catch (err) {
         console.error(err);
         statusEl.textContent = "An error occurred while sending.";
+        if (window.turnstile) window.turnstile.reset();
       }
     });
   }
