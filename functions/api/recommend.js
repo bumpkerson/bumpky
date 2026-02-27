@@ -61,7 +61,7 @@ export async function onRequestPost({ request, env }) {
       },
       body: JSON.stringify({
         from: env.MAIL_FROM,
-        to: "bumpkerson@gmail.com",
+        to: "contact@bumpky.com",
         subject: `Bumpky recommendation from ${name}`,
         text: `Name: ${name}\nEmail: ${email}\n\n${message}`
       })
