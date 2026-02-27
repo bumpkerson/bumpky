@@ -77,7 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const payload = {
         name: formData.get("name"),
         email: formData.get("email"),
-        message: formData.get("message")
+        message: formData.get("message"),
+        turnstileToken: formData.get("cf-turnstile-response") || ""
       };
 
       try {
