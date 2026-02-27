@@ -1,5 +1,27 @@
 export async function onRequestPost({ request, env }) {
   try {
+
+    // Allow only requests coming from your site (browser-originated)
+    const origin = request.headers.get("Origin") || "";
+    const referer = request.headers.get("Referer") || "";
+
+    const allowedOrigins = new Set([
+      "https://bumpky.com",
+      "https://www.bumpky.com",
+      "https://bumpky.pages.dev",
+    ]);
+
+    const allowed =
+      (origin && origin !== "null" && allowedOrigins.has(origin)) ||
+      ((origin === "" || origin === "null") &&
+        referer &&
+        [...allowedOrigins].some((o) => referer.startsWith(o)));
+
+
+    if (!allowed) {
+      return new Response("Forbidden origin", { status: 403 });
+    }
+
     const body = await request.json();
     const { name, email, message, turnstileToken } = body;
 
