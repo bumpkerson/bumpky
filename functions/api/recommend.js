@@ -44,9 +44,9 @@ export async function onRequestPost({ request, env }) {
     const emailN = norm(email);
     const messageN = norm(message);
 
-    if (nameN.length < 2 || nameN.length > 80) return new Response("Invalid name", { status: 400 });
+    if (nameN.length < 1 || nameN.length > 80) return new Response("Invalid name", { status: 400 });
     if (emailN.length < 5 || emailN.length > 254) return new Response("Invalid email", { status: 400 });
-    if (messageN.length < 3 || messageN.length > 2000) return new Response("Invalid message", { status: 400 });
+    if (messageN.length < 1 || messageN.length > 2000) return new Response("Invalid message", { status: 400 });
 
     // Simple email format check (good enough)
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailN)) {
